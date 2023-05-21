@@ -1,18 +1,28 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <div v-if="!userStore.getters.isLoggedIn">
+    <FormLogin />
+  </div>
+  <div v-else>
+    <h2>Welcome, {{ userStore.state.name }}</h2>
+    <Counter />
+    <button @click="userStore.logout()">Log Out</button>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import { defineComponent, onMounted } from "vue";
+import Counter from "./components/Counter.vue";
+import FormLogin from "./components/FormLogin.vue";
+import userStore from "@/stores/user";
 
 export default defineComponent({
   name: 'App',
-  components: {
-    HelloWorld
+  components: { FormLogin, Counter },
+  setup() {
+    onMounted(userStore.getUser)
+    return { userStore }
   }
-});
+})
 </script>
 
 <style>
