@@ -9,10 +9,9 @@ const state = reactive(
         error: ''
     })
 
-const getters =
-{
-    isLoggedIn: computed(() => state.username != null && state.username !== '' && state.username.length > 0)
-}
+const getters = reactive({
+    isLoggedIn: computed(() => state.username !== '')
+})
 
 const actions =
 {
@@ -47,8 +46,6 @@ const actions =
     async logout() {
         state.name = ''
         state.username = ''
-
-        console.log(getters.isLoggedIn)
     }
 }
 
