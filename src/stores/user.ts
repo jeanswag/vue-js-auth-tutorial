@@ -1,42 +1,55 @@
 import { computed, reactive } from 'vue'
 import * as Request from '@/requests'
 
-const state = reactive({
-  name: '',
-  username: '',
+const state = reactive(
+    {
+        name: '',
+        username: '',
 
-  error: ''
-})
+        error: ''
+    })
 
-const getters = reactive({
-  isLoggedIn: computed(() => state.username !== '')
-})
+const getters =
+{
+    isLoggedIn: computed(() => state.username != null && state.username !== '' && state.username.length > 0)
+}
 
-const actions = {
-  async getUser() {
-    const user = await Request.getUser()
-    if (user == null) return
+const actions =
+{
+    async getUser() {
+        const user = await Request.getUser();
+        if (user != null) {
+            state.name = user.name;
+            state.username = user.username;
+        }
+    },
 
-    state.name = user.name
-    state.username = user.username
-  },
-  async login(username: string, password: string) {
-    const user = await Request.login(username, password)
-    if (user == null) {
-      state.error = 'Could not find user.'
-      return false
+    async login(username: string, password: string) {
+        let loggedIn = false;
+        console.log(username + "" + password)
+        const user = await Request.login(username, password)
+
+        if (user == null) {
+            state.error = 'Could not find user.'
+        }
+        else {
+
+            state.name = user.name;
+            state.username = username;
+            state.error = ''
+
+            loggedIn = true;
+        }
+
+        return loggedIn;
+    },
+
+    async logout() {
+        state.name = ''
+        state.username = ''
+
+        console.log(getters.isLoggedIn)
     }
-
-    state.name = user.name
-    state.username = username
-    state.error = ''
-
-    return true
-  },
-  async logout() {
-    state.name = ''
-    state.username = ''
-  }
 }
 
 export default { state, getters, ...actions }
